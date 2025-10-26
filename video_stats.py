@@ -11,7 +11,7 @@ API_KEY=os.getenv("API_KEY")
 
 max_results=50
 
-CHANNEL="MrBeast"
+CHANNEL=os.getenv("CHANNEL_HANDLE")
 
 def get_playlist_id():
 
