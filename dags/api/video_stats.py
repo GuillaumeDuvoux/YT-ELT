@@ -1,18 +1,21 @@
 import requests  
 import json
-import os
+#import os
 from datetime import date
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
+from airflow.decorators import task
+from airflow.models import Variable
 
-load_dotenv(dotenv_path="./.env" )
+#load_dotenv(dotenv_path="./.env" )
 
  
-API_KEY=os.getenv("API_KEY")
+API_KEY=Variable.get("API_KEY")
 
 max_results=50
 
-CHANNEL=os.getenv("CHANNEL_HANDLE")
+CHANNEL=Variable.get("CHANNEL_HANDLE")
 
+@task
 def get_playlist_id():
 
     try:
@@ -40,7 +43,7 @@ def get_playlist_id():
     
 playlist_id=get_playlist_id()
 print(playlist_id)
-
+@task
 def get_video_id(playlist_id):
 
     video_ids=[]
@@ -75,7 +78,7 @@ def get_video_id(playlist_id):
 
     except requests.exceptions.RequestException as e:
         raise e
-
+@task
 def extract_video_data(video_ids):
 
     extracted_data=[]
@@ -103,7 +106,7 @@ def extract_video_data(video_ids):
                     "title":snippet['title'],
                     "publishedAt":snippet['publishedAt'],
                     "duration":contenDetails['duration'],
-                    "view_count":statistics.get("view_count",None),
+                    "viewCount":statistics.get("viewCount",None),
                     "likeCount":statistics.get("likeCount",None),
                     "commentCount":statistics.get("commentCount",None),
                 }
@@ -117,7 +120,7 @@ def extract_video_data(video_ids):
     except requests.exceptions.RequestException as e:
         raise e
     
-    
+@task
 def save_to_json(extracted_data):
     file_path= f"./data/YT_data_{date.today()}.json"
 
