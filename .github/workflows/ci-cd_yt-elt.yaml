@@ -89,7 +89,7 @@ jobs:
         if: steps.changed-files-tests.outputs.any_changed == 'true'
         run:  |
           DAG_NAMES=("produce_json" "update_db" "data_quality")
-          for DAG_NAME in "${DAG_NAMES[@]}"; do
+          for DAG in "${DAG_NAMES[@]}"; do
             docker exec -t airflow-worker sh -c "airflow dags test $DAG"
           done
       - name: Tear down Docker Compose
